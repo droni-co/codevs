@@ -9,7 +9,8 @@
 <script setup lang="ts">
 // Remember to disable the middleware protection from your page!
 definePageMeta({
-  auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: '/' }
+  auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: '/' },
+  layout: 'blank'
 })
 
 const { signIn, getProviders } = useAuth()

@@ -13,38 +13,14 @@
 
     <aside
       id="default-sidebar"
-      class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+      class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 shadow-lg bg-white dark:bg-gray-800"
       aria-label="Sidebar"
     >
-      hola mundo
-      <ClientOnly v-if="!colorMode?.forced">
-        <UButton
-          :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
-          color="neutral"
-          variant="ghost"
-          @click="isDark = !isDark"
-        />
-
-        <template #fallback>
-          <div class="size-8" />
-        </template>
-      </ClientOnly>
+      <SideBar />
     </aside>
-    <div class="p-4 sm:ml-64">
+    <div class="sm:ml-64">
       <NuxtRouteAnnouncer />
       <NuxtPage />
     </div>
   </UApp>
 </template>
-<script setup lang="ts">
-const colorMode = useColorMode();
-
-const isDark = computed({
-  get() {
-    return colorMode.value === "dark";
-  },
-  set() {
-    colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
-  },
-});
-</script>
