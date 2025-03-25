@@ -1,6 +1,5 @@
 <template>
-  <div class="p-2">
-    <ClientOnly v-if="!colorMode?.forced">
+  <div class="p-2 h-full flex flex-col justify-between">
       <div>
         <UButtonGroup class="w-full">
           <UButton color="neutral" variant="subtle" label="Button" class="grow">
@@ -10,8 +9,9 @@
           <UButton color="neutral" variant="outline" icon="i-meteor-icons:power"  @click="signOut" />
         </UButtonGroup>
       </div>
+    <ClientOnly v-if="!colorMode?.forced">
       <UButton color="neutral" variant="outline" :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'" @click="isDark = !isDark">
-        Color mode
+        Color mode: {{ isDark ? 'Dark' : 'Light' }}
       </UButton>
     </ClientOnly>
   </div>
