@@ -3,21 +3,21 @@
     <UCard>
       <template #header>
         <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold">Rooms</h2>
-          <UButton to="/" icon="i-meteor-icons:plus">
-            Create Room
+          <h2 class="text-lg font-semibold">Challenges</h2>
+          <UButton to="/challenges/create" icon="i-meteor-icons:plus">
+            Create challenge
           </UButton>
         </div>
       </template>
-      <div v-for="room in rooms" :key="room.id">
-        <NuxtLink :to="`/rooms/${room.code}`">
-          <h3 class="text-lg font-semibold">{{ room.name }}</h3>
+      <div v-for="challenge in challenges" :key="challenge.id">
+        <NuxtLink :to="`/challenges/${challenge.slug}`">
+          <h3 class="text-lg font-semibold">{{ challenge.name }}</h3>
         </NuxtLink>
-        <p>{{ room.description }}</p>
+        <p>{{ challenge.description }}</p>
       </div>
     </UCard>
   </UContainer>
 </template>
 <script setup lang="ts">
-const rooms = (await useFetch<Room[]>('/api/rooms')).data;
+const challenges = (await useFetch<Challenge[]>('/api/challenges')).data;
 </script>

@@ -2,13 +2,13 @@
   <div class="flex h-screen">
     <div class="w-1/2 p-4">
       <h1 class="text-2xl font-bold">
-        {{ room.name }}
+        {{ challenge.name }}
       </h1>
       <p>
-        {{ room.description }}
+        {{ challenge.description }}
       </p>
       <p>
-        <strong>Code:</strong> {{ room.code }}
+        <strong>Code:</strong> {{ challenge.code }}
       </p>
     </div>
     <div class="flex flex-col w-full h-full">
@@ -42,7 +42,7 @@ function suma(numeroA:number, numeroB:number): number {
 const consoleResult = ref('');
 const consoleTime = ref(0);
 
-const room = (await useFetch<Room>(`/api/rooms/${route.params.code}`)).data;
+const challenge = (await useFetch<Challenge>(`/api/challenge/${route.params.slug}`)).data;
 
 
 const compileCode = async () => {

@@ -1,5 +1,5 @@
 # TODO
- - [ ] Models and ORM
+ - [x] Models and ORM
  - [ ] Backend routes
  - [ ] Auth Middleware
  - [ ] Public site
