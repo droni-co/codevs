@@ -24,7 +24,7 @@
 - name
 - description
 - content
-- bolierplate
+- func_name
 - level
 - created_at
 - updated_at

@@ -33,7 +33,7 @@ model Challenge {
   name        String?
   description String?      @db.Text
   content     String?      @db.Text
-  biolerplate String?      @db.Text
+  funcName    String
   level       Int?
   created_at  DateTime?
   userId      String

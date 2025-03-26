@@ -7,21 +7,21 @@
         </div>
       </template>
       <div class="flex w-full">
-        <UForm :schema="schema" :state="newChallenge" class="space-y-4 w-1/2" @submit="onSubmit">
-          <UFormField label="Name" name="name">
-            <UInput v-model="newChallenge.name" size="xl" class="block" />
+        <UForm :schema="schema" :state="newChallenge" class="space-y-4 w-1/2" @submit="saveChallenge">
+          <UFormField label="Name" name="name" required>
+            <UInput v-model="newChallenge.name" size="xl" class="block" placeholder="ej. Suma de dos números" />
           </UFormField>
 
-          <UFormField label="Description" name="description">
-            <UTextarea v-model="newChallenge.description" class="block" />
+          <UFormField label="Function name" name="funcName" description="Nombre de la funcion que se evaluara en pruebas ej. sumaDosNumeros." required>
+            <UInput v-model="newChallenge.funcName" class="block" placeholder="sumaDosNumeros" />
           </UFormField>
 
-          <UFormField label="Content (markdown)" name="content">
-            <MonacoEditor v-model="newChallenge.content" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light' }" lang="markdown" />
+          <UFormField label="Description" name="description" required>
+            <UTextarea v-model="newChallenge.description" class="block" placeholder="ej. Dado un array de enteros y un objetivo crear una funcion que retorne los indices de dos números que sumados de como reusltado el objetivo. " />
           </UFormField>
 
-          <UFormField label="Boilerplate (typescript)" name="boilerplate">
-            <MonacoEditor v-model="newChallenge.boilerplate" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light' }" lang="typescript" />
+          <UFormField label="Content" name="content" description="Definiciones del reto y ejemplos para tener como referencia en formato Markdown" required>
+            <MonacoEditor v-model="newChallenge.content" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light', minimap: { enabled: false }, wordWrap: 'on', tabSize: 2, autoIndent: 'brackets' }" lang="markdown" />
           </UFormField>
 
           <UFormField label="Level" name="level">
@@ -50,10 +50,10 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 const colorMode = useColorMode();
 
 const schema = v.object({
-  name: v.pipe(v.string(), v.minLength(10, 'Must be at least 3 characters')),
-  description: v.pipe(v.string(), v.minLength(50, 'Must be at least 50 characters')),
-  content: v.pipe(v.string(), v.minLength(50, 'Must be at least 50 characters')),
-  boilerplate: v.pipe(v.string(), v.minLength(50, 'Must be at least 50 characters')),
+  name: v.pipe(v.string(), v.minLength(10, 'Debe ser al menos 10 caracteres')),
+  description: v.pipe(v.string(), v.minLength(50, 'Debe ser al menos 50 caracteres')),
+  content: v.pipe(v.string(), v.minLength(50, 'Debe ser al menos 50 caracteres')),
+  funcName: v.pipe(v.string(), v.minLength(5, 'Debe ser al menos 5 caracteres'), v.regex(/^[a-zA-Z]+$/, 'Solo se permiten caracteres alfabéticos')),
   level: v.number()
 })
 
@@ -62,14 +62,18 @@ type Schema = v.InferOutput<typeof schema>
 const newChallenge = ref({
   name: '',
   description: '',
-  content: '',
-  boilerplate: '// typescript function name',
+  content: '# ejemplos\n > Describe las caracteristicas del reto y algunos ejemplos para tener como referencia\n```\n  Inputs: [0,1,2,3], 5\n  Output: [2,3] \n```',
+  funcName: '',
   level: 1
 })
 
 const toast = useToast()
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+async function saveChallenge(event: FormSubmitEvent<Schema>) {
   toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
   console.log(event.data)
+  $fetch('/api/challenges', {
+    method: 'POST',
+    body: event.data
+  })
 }
 </script>
