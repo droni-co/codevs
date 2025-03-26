@@ -36,15 +36,16 @@ import ts from "typescript";
 import type { Challenge } from "~/types";
 const colorMode = useColorMode();
 const route = useRoute();
+const challenge = await $fetch<Challenge>(`/api/challenges/${route.params.slug}`);
 const value = ref(`
-function suma(numeroA:number, numeroB:number): number {
-  return numeroA + numeroB;
+function ${challenge.funcName}() {
+  return null;
 }
 `);
 const consoleResult = ref('');
 const consoleTime = ref(0);
 
-const challenge = await $fetch<Challenge>(`/api/challenges/${route.params.slug}`);
+
 console.log(challenge);
 
 
@@ -57,8 +58,8 @@ const compileCode = async () => {
     return {
       test: 'Suma de 1 + 2',
       esperado: 3,
-      obtenido: suma(1, 2),
-      check: suma(1, 2) === 3
+      obtenido: ${challenge.funcName}(1, 2),
+      check: ${challenge.funcName}(1, 2) === 3
     }
   `;
   try {
