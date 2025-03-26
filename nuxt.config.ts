@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@sidebase/nuxt-auth'
+    '@sidebase/nuxt-auth',
+    'nuxt-monaco-editor',
   ],
   css: ['assets/css/main.css'],
   auth: {
@@ -17,4 +18,12 @@ export default defineNuxtConfig({
     googleClientId: 'YOUR_GOOGLE_CLIENT_ID',
     googleClientSecret: 'YOUR_GOOGLE'
   },
+  monacoEditor: {
+    // These are default values:
+    locale: 'en',
+    componentName: {
+      codeEditor: 'MonacoEditor',
+      diffEditor: 'MonacoDiffEditor'
+    }
+  }
 })

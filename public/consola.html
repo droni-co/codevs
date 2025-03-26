@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="consola">
+    <textarea id="entradaConsola" placeholder="Escribe tu código JS aquí..."></textarea>
+    <div id="salidaConsola"></div>
+    <button onclick="ejecutarCodigo()">Ejecutar</button>
+  </div>
+  
+  <script>
+    function ejecutarCodigo() {
+      const codigo = document.getElementById("entradaConsola").value;
+      const salidaConsola = document.getElementById("salidaConsola");
+      try {
+        // Usando Function, para mas seguridad.
+        const funcionEjecutable = new Function(codigo);
+        const resultado = funcionEjecutable();
+        if(resultado !== undefined){
+          salidaConsola.textContent = resultado;
+        }
+      } catch (error) {
+        salidaConsola.textContent = "Error: " + error.message;
+      }
+    }
+  
+    // Sobreescribir console.log para capturar la salida
+    const originalConsoleLog = console.log;
+    console.log = function(...args) {
+      const mensaje = args.join(" ");
+      document.getElementById("salidaConsola").textContent += mensaje + "\n";
+      originalConsoleLog.apply(console, args);
+    };
+  </script>
+  
+  <style>
+    #consola {
+      background-color: #222;
+      color: #eee;
+      padding: 10px;
+      font-family: monospace;
+    }
+  
+    #entradaConsola,
+    #salidaConsola {
+      width: 100%;
+      height: 150px;
+      background-color: #333;
+      color: #eee;
+      margin-bottom: 10px;
+    }
+  </style>
+</body>
+</html>
