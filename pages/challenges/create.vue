@@ -47,6 +47,9 @@
 <script setup lang="ts">
 import * as v from 'valibot'
 import type { FormSubmitEvent } from '@nuxt/ui'
+definePageMeta({
+  middleware: 'sidebase-auth'
+})
 const colorMode = useColorMode();
 
 const schema = v.object({
@@ -70,7 +73,6 @@ const newChallenge = ref({
 const toast = useToast()
 async function saveChallenge(event: FormSubmitEvent<Schema>) {
   toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
-  console.log(event.data)
   $fetch('/api/challenges', {
     method: 'POST',
     body: event.data

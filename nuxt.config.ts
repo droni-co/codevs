@@ -11,8 +11,6 @@ export default defineNuxtConfig({
   ],
   css: ['assets/css/main.css'],
   auth: {
-    globalAppMiddleware: true,
-    isEnabled: true,
     baseURL: '/api/auth',
   },
   runtimeConfig: {

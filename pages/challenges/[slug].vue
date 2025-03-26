@@ -45,10 +45,6 @@ function ${challenge.funcName}() {
 const consoleResult = ref('');
 const consoleTime = ref(0);
 
-
-console.log(challenge);
-
-
 const compileCode = async () => {
   consoleResult.value = '';
   const codigo = ts.transpileModule(value.value, { compilerOptions: { module: ts.ModuleKind.CommonJS }});
@@ -70,7 +66,6 @@ const compileCode = async () => {
     const fin = performance.now();
     consoleTime.value = fin - inicio;
     if(resultado !== undefined){
-      console.log(resultado);
       consoleResult.value = resultado;
     }
   } catch (error) {

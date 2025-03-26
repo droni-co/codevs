@@ -3,10 +3,6 @@ import GoogleProvider from 'next-auth/providers/google'
 import { PrismaClient } from '@prisma/client'
 
 export default NuxtAuthHandler({
-  pages: {
-    // Change the default behavior to use `/login` as the path for the sign-in page
-    signIn: '/login'
-  },
   providers: [
     GoogleProvider.default({
       clientId: useRuntimeConfig().googleClientId,

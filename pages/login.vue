@@ -1,7 +1,7 @@
 <template>
   <div>
     <button v-for="provider in providers" :key="provider.id" @click="signIn(provider.id)">
-      Sign in with {{ provider.name }}
+      Sign in with {{ provider.name }} {{ provider.id }}
     </button>  
   </div>
 </template>
