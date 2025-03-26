@@ -5,6 +5,7 @@ CREATE TABLE `User` (
     `slug` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
+    `picture` VARCHAR(191) NOT NULL,
     `provider` VARCHAR(191) NOT NULL,
     `provider_id` VARCHAR(191) NOT NULL,
     `points` INTEGER NULL DEFAULT 0,
