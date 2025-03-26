@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxt/eslint": "^1.2.0",
     "@nuxt/ui": "^3.0.1",
+    "@prisma/nuxt": "^0.3.0",
     "@sidebase/nuxt-auth": "^0.10.1",
     "eslint": "^9.23.0",
     "lz-string": "^1.5.0",

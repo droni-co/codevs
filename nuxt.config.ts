@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@sidebase/nuxt-auth',
     'nuxt-monaco-editor',
+    '@prisma/nuxt'
   ],
   css: ['assets/css/main.css'],
   auth: {

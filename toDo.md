@@ -1,3 +1,12 @@
+# TODO
+ - [ ] Models and ORM
+ - [ ] Backend routes
+ - [ ] Auth Middleware
+ - [ ] Public site
+ - [ ] Activity column
+ - [ ] SEO
+
+
 # Models
 
 ## User
@@ -10,14 +19,13 @@
 - updated_at
 
 ## Challenge
+- user_id
 - slug
 - name
-- user_id
 - description
 - content
 - bolierplate
 - level
-- tags
 - created_at
 - updated_at
 
@@ -25,14 +33,14 @@
 - challenge_id
 - name
 - inputs
-- expected_output
+- output
 
 ## Submission
 - user_id
 - challenge_id
 - code
-- result
-- time
+- complete
+- complete_time
 - votes
 - rank
 - created_at
@@ -50,3 +58,5 @@
 - content
 - created_at
 - updated_at
+
+
