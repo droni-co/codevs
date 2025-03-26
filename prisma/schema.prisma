@@ -11,20 +11,18 @@ datasource db {
 }
 
 model User {
-  id          String       @id @unique @default(uuid())
-  admin       Boolean?     @default(false)
-  slug        String       @unique
-  name        String
-  email       String
-  picture     String
-  provider    String
-  provider_id String       @unique
-  points      Int?         @default(0)
-  created_at  DateTime?
-  Challenge   Challenge[]
-  Submission  Submission[]
-  Vote        Vote[]
-  Comment     Comment[]
+  id         String       @id @unique @default(uuid())
+  admin      Boolean?     @default(false)
+  slug       String       @unique
+  name       String
+  email      String       @unique
+  picture    String
+  points     Int?         @default(0)
+  created_at DateTime?
+  Challenge  Challenge[]
+  Submission Submission[]
+  Vote       Vote[]
+  Comment    Comment[]
 }
 
 model Challenge {

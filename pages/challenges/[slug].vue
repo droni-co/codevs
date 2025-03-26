@@ -7,8 +7,9 @@
       <p>
         {{ challenge.description }}
       </p>
+      {{ challenge.content }}
       <p>
-        <strong>Code:</strong> {{ challenge.code }}
+        <strong>Code:</strong> {{ challenge.slug }}
       </p>
     </div>
     <div class="flex flex-col w-full h-full">
@@ -32,6 +33,7 @@
 </template>
 <script setup lang="ts">
 import ts from "typescript";
+import type { Challenge } from "~/types";
 const colorMode = useColorMode();
 const route = useRoute();
 const value = ref(`
@@ -42,7 +44,8 @@ function suma(numeroA:number, numeroB:number): number {
 const consoleResult = ref('');
 const consoleTime = ref(0);
 
-const challenge = (await useFetch<Challenge>(`/api/challenge/${route.params.slug}`)).data;
+const challenge = await $fetch<Challenge>(`/api/challenges/${route.params.slug}`);
+console.log(challenge);
 
 
 const compileCode = async () => {

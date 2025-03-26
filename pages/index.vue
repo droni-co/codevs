@@ -19,5 +19,6 @@
   </UContainer>
 </template>
 <script setup lang="ts">
-const challenges = (await useFetch<Challenge[]>('/api/challenges')).data;
+import type { Challenge } from '~/types';
+const challenges = await $fetch<Challenge[]>('/api/challenges');
 </script>

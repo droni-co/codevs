@@ -21,7 +21,7 @@ export default NuxtAuthHandler({
         const prisma = new PrismaClient()
         await prisma.user.upsert({
           where: {
-            id: String(account.providerAccountId)
+            email: String(user.email)
           },
           update: {
             name: String(user.name),
@@ -34,8 +34,6 @@ export default NuxtAuthHandler({
             name: String(user.name),
             email: String(user.email),
             picture: String(user.image),
-            provider: String(account.provider),
-            provider_id: String(account.providerAccountId),
             created_at: new Date()
           }
         })

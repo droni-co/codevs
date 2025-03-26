@@ -6,13 +6,12 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `picture` VARCHAR(191) NOT NULL,
-    `provider` VARCHAR(191) NOT NULL,
-    `provider_id` VARCHAR(191) NOT NULL,
     `points` INTEGER NULL DEFAULT 0,
     `created_at` DATETIME(3) NULL,
 
     UNIQUE INDEX `User_id_key`(`id`),
     UNIQUE INDEX `User_slug_key`(`slug`),
+    UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
