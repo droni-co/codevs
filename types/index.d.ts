@@ -16,8 +16,14 @@ export interface Challenge {
 export interface Test {
   id: string
   challengeId: string
-  name: string
   inputs: string
   output: string
   challenge?: Challenge
+}
+
+export interface TestResult {
+  test: string,
+  esperado: string,
+  obtenido: string,
+  check: boolean
 }

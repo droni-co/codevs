@@ -38,7 +38,6 @@
             <div class="flex flex-col">
               <div v-for="(test, index) in newChallenge.tests" :key="test.id" class="flex gap-2 items-center border border-slate-500 rounded p-2 shadow-lg">
                 <div class="grow">
-                  <h2 class="text-secondary">{{ test.name }}</h2>
                   <UButtonGroup class="grow">
                     <UBadge color="neutral" variant="outline" :label="'Entrada: ' + test.inputs" />
                     <UBadge color="neutral" variant="outline" :label="'Salida: ' + test.output" />
@@ -48,16 +47,17 @@
                 <UButton icon="i-meteor-icons:trash" variant="outline" @click="removeTest(index)" />
               </div>
             </div>
-            <pre>
-              {{ newChallenge.scaffold }}
-            </pre>
           </div>
           <div v-else-if="item.slot === 'scaffold'">
-            <MonacoEditor v-model="newChallenge.scaffold" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light', minimap: { enabled: false }, wordWrap: 'on', tabSize: 2, autoIndent: 'brackets', readOnly: true }" lang="typescript" />
-
-            <UButton type="submit" class="mt-4">
-              Crear desafío
-            </UButton>
+            <UFormField label="Scaffold" name="scaffold" description="Código inicial con el nombre de la función y los parametros de entrada para empezar el reto con andamieaje." class="mb-4" required>
+              <MonacoEditor v-model="newChallenge.scaffold" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light', minimap: { enabled: false }, wordWrap: 'on', tabSize: 2, autoIndent: 'brackets' }" lang="typescript" />
+            </UFormField>
+            
+            <div class="text-center">
+              <UButton type="submit" size="xl" class="mt-4 mx-auto" icon="i-material-symbols:add-task">
+                Crear desafío
+              </UButton>
+            </div>
           </div>
         </template>
       </UStepper>
@@ -66,6 +66,7 @@
         <UButton
           leading-icon="i-lucide-arrow-left"
           :disabled="!stepper?.hasPrev"
+          variant="outline"
           @click="stepper?.prev()"
         >
           Anterior
@@ -74,6 +75,7 @@
         <UButton
           trailing-icon="i-lucide-arrow-right"
           :disabled="!stepper?.hasNext"
+          variant="outline"
           @click="stepper?.next()"
         >
           Siguiente
@@ -90,6 +92,8 @@ definePageMeta({
   middleware: 'sidebase-auth'
 })
 const colorMode = useColorMode();
+const toast = useToast()
+const router = useRouter()
 
 const schema = v.object({
   name: v.pipe(v.string(), v.minLength(10, 'Debe ser al menos 10 caracteres')),
@@ -100,7 +104,6 @@ const schema = v.object({
   scaffold: v.string(),
   tests: v.pipe(
     v.array(v.object({
-      name: v.string(),
       inputs: v.string(),
       output: v.string()
     })),
@@ -140,7 +143,6 @@ const addTest = () => {
   newTestCase.value = {
     id: '',
     challengeId: '',
-    name: '',
     inputs: '',
     output: ''
   }
@@ -151,14 +153,25 @@ const removeTest = (index: number) => {
   newChallenge.value.tests.splice(index, 1)
 }
 
-const toast = useToast()
 async function saveChallenge(event: FormSubmitEvent<Schema>) {
-  toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
-  // $fetch('/api/challenges', {
-  //   method: 'POST',
-  //   body: event.data
-  // })
-  console.log(event.data)
+  $fetch('/api/challenges', {
+    method: 'POST',
+    body: event.data
+  }).then((challenge) => {
+    toast.add({
+      title: 'Success',
+      description: 'The form has been submitted.',
+      color: 'success'
+    })
+    router.push(`/challenges/${challenge.slug}`)
+
+  }).catch(() => {
+    toast.add({
+      title: 'Error',
+      description: 'An error occurred while submitting the form.',
+      color: 'error'
+    })
+  })
 }
 
 const scaffold = () => {

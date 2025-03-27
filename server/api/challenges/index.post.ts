@@ -8,21 +8,22 @@ export default defineEventHandler( async (event) => {
   if (!session) { throw createError({ statusMessage: 'Unauthenticated', statusCode: 403 }) }
   
   const prisma = new PrismaClient()  
-  const { name, funcName, description, content, level } = await readBody(event)
+  const { name, funcName, description, content, level, scaffold, tests } = await readBody(event)
   
   const user = await prisma.user.findFirstOrThrow({
     where: {
-      email: String(session?.user?.email)
+      email: String(session.user?.email)
     }
   })
 
-  const result = await prisma.challenge.create({
+  const challenge = await prisma.challenge.create({
     data: {
       id: crypto.randomUUID(),
-      slug: funcName,
+      slug: funcName+'-'+Math.floor(Math.random()*1000),
       name,
       description,
       content,
+      scaffold,
       funcName,
       level,
       created_at: new Date(),
@@ -30,5 +31,15 @@ export default defineEventHandler( async (event) => {
     }
   })
 
-  return result
+  await prisma.test.createMany({
+    data: tests.map((test: { inputs: string; output: string }) => ({
+      id: crypto.randomUUID(),
+      inputs: test.inputs,
+      output: test.output,
+      challengeId: challenge.id,
+    }))
+  })
+
+
+  return challenge
 })
