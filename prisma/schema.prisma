@@ -45,7 +45,6 @@ model Challenge {
 model Test {
   id          String    @id @unique @default(uuid())
   challenge   Challenge @relation(fields: [challengeId], references: [id])
-  name        String?
   inputs      String?
   output      String?
   challengeId String

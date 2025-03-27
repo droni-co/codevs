@@ -26,7 +26,6 @@
             </UFormField>
             <UFormField label="Casos de prueba" name="tests" description="Agrega diferentes test con sus entradas y salidas esperadas para poder validar el cumplimiento del reto." class="mb-4">
               <UButtonGroup>
-                <UInput v-model="newTestCase.name" placeholder="Nombre del test" />
                 <UBadge color="neutral" variant="outline" size="lg" label="Entrada" />
                 <UInput v-model="newTestCase.inputs" placeholder="parametros" />
                 <UBadge color="neutral" variant="outline" size="lg" label="Salida:" />
@@ -135,6 +134,8 @@ const newTestCase:Ref<Test> = ref({
 
 const addTest = () => {
   if(!newChallenge.value.tests) return;
+  newTestCase.value.output = JSON.stringify(separarValores(newTestCase.value.output)[0])
+  newTestCase.value.inputs = separarValores(newTestCase.value.inputs).map((input: unknown) => JSON.stringify(input)).join(', ')
   newChallenge.value.tests.push(newTestCase.value)
   newTestCase.value = {
     id: '',
@@ -161,24 +162,21 @@ async function saveChallenge(event: FormSubmitEvent<Schema>) {
 }
 
 const scaffold = () => {
-  const firstTest = (newChallenge.value.tests ?? [])[0] ?? null
+  const usedTest = (newChallenge.value.tests ?? [])[((newChallenge.value.tests ?? []).length - 1)] ?? null
   let inputs = ''
-  let output = 'null'
   let outputType = ''
-  if(firstTest) {
-    console.log(firstTest.inputs)
-    firstTest.inputs.split(',').forEach((input, index) => {
-      inputs += `param${index + 1}: ${determinarTipo(input)}, `
-      output = firstTest.output
-      outputType = `: ${determinarTipo(firstTest.output)}`
+  if(usedTest) {
+    separarValores(usedTest.inputs).forEach((input, index) => {
+      inputs += `param${index + 1}: ${typeof(input)}, `
+      outputType = `: ${typeof separarValores(usedTest.output)[0]}`
     })
   }
-  newChallenge.value.scaffold = ` // Scaffold funcction, start here!
-  function ${newChallenge.value.funcName}(${inputs.slice(0, -2)})${outputType} {
-    /* Make your magic here */
-    return ${output};
-  }
-  `
+  newChallenge.value.scaffold = `// Scaffold funcction, start here!
+function ${newChallenge.value.funcName}(${inputs.slice(0, -2)})${outputType} {
+  /* Make your magic here */
+  return ${responseByType(outputType)};
+}
+`
 }
 const stepper = useTemplateRef('stepper')
 const items = ref<StepperItem[]>([
@@ -202,16 +200,26 @@ const items = ref<StepperItem[]>([
   }
 ])
 
-const determinarTipo = (srt:string) => {
+const separarValores = (str:string): unknown[] =>{
   try {
-    const valor = JSON.parse(srt);
-    if (Array.isArray(valor)) { return 'array'; }
-    if (valor === null) { return 'object'; }
-    return typeof valor;
+    const parseStr = '{ "data": [' + str.replaceAll("'", '"' ) + ']}'
+    return JSON.parse(parseStr).data;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_error) {
-    // Si JSON.parse falla, asumimos que es una cadena
-    return 'string';
+  } catch (error) {
+    return [str]
+  }
+}
+
+const responseByType = (type: string): string => {
+  switch (type) {
+    case ': number':
+      return '0'
+    case ': string':
+      return "''"
+    case ': boolean':
+      return 'false'
+    default:
+      return 'null'
   }
 }
 </script>
