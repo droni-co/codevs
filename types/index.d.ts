@@ -4,8 +4,20 @@ export interface Challenge {
   name: string
   description: string
   content: string
+  scaffold: string
   funcName: string
   level: number
-  created_at: string
+  created_at: Date
   userId: string
+  tests?: Test[]
+  user?: User
+}
+
+export interface Test {
+  id: string
+  challengeId: string
+  name: string
+  inputs: string
+  output: string
+  challenge?: Challenge
 }

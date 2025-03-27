@@ -37,9 +37,8 @@ CREATE TABLE `Challenge` (
 CREATE TABLE `Test` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NULL,
-    `inputs` JSON NULL,
+    `inputs` VARCHAR(191) NULL,
     `output` VARCHAR(191) NULL,
-    `output_type` VARCHAR(191) NULL,
     `challengeId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `Test_id_key`(`id`),

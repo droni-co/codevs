@@ -46,9 +46,8 @@ model Test {
   id          String    @id @unique @default(uuid())
   challenge   Challenge @relation(fields: [challengeId], references: [id])
   name        String?
-  inputs      Json?
+  inputs      String?
   output      String?
-  output_type String?
   challengeId String
 }
 
