@@ -1,18 +1,16 @@
 <template>
   <div class="flex h-screen">
-    <div class="w-1/2 p-4">
-      <h1 class="text-2xl font-bold">
-        {{ challenge.name }}
-      </h1>
-      <p>
-        {{ challenge.description }}
-      </p>
-      {{ challenge.content }}
-      <p>
-        <strong>Code:</strong> {{ challenge.slug }}
-      </p>
+    <div class="w-3/7 p-4">
+      <article class="prose dark:prose-invert">
+        <h1>{{ challenge.name }}</h1>
+        <p>
+          {{ challenge.description }}
+        </p>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-html="md.render(challenge.content)" />
+      </article>
     </div>
-    <div class="flex flex-col w-full h-full">
+    <div class="flex flex-col w-4/7 h-full">
       <div class="flex justify-between p-4">
         <h2 class="text-xl font-bold">Code</h2>
         <UButton icon="i-meteor-icons:play" @click="compileCode">
@@ -34,6 +32,8 @@
 <script setup lang="ts">
 import ts from "typescript";
 import type { Challenge } from "~/types";
+import markdownit from 'markdown-it'
+const md = markdownit()
 const colorMode = useColorMode();
 const route = useRoute();
 const challenge = await $fetch<Challenge>(`/api/challenges/${route.params.slug}`);
