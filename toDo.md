@@ -1,6 +1,6 @@
 # TODO
  - [x] Models and ORM
- - [ ] Backend routes
+ - [x] Backend routes
  - [ ] Auth Middleware
  - [ ] Public site
  - [ ] Activity column

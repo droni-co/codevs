@@ -18,11 +18,16 @@
         </UButton>
       </div>
   
-      <MonacoEditor v-model="value" class="w-full min-h-3/5" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light' }" lang="typescript" />
-      <div class="overflow-y-auto h-full bg-slate-800 p-2">
-        <div class="flex justify-between border border-slate-500 rounded p-2 shadow-lg">
+      <MonacoEditor
+        v-model="value"
+        class="w-full"
+        :class="{ 'h-1/2': consoleResults.length > 0, 'h-full': consoleResults.length === 0 }"
+        :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light' }"
+        lang="typescript" />
+      <div class="overflow-y-auto bg-slate-100 dark:bg-slate-800 p-2" :class="{ 'h-1/2': consoleResults.length > 0 }">
+        <div class="flex justify-between border border-slate-500 rounded p-2 shadow-lg mb-2">
           <h2 class="text-xl font-bold">Result</h2>
-          <p v-if="consoleTime > 0" class="text-sm">Time: {{ consoleTime }}ms</p>
+          <p v-if="consoleTime > 0" class="text-sm">Time: {{ Math.round(consoleTime) }}ms</p>
         </div>
         <UAlert
           v-for="result in consoleResults" :key="result.test"
@@ -44,6 +49,7 @@ const md = markdownit()
 const colorMode = useColorMode();
 const route = useRoute();
 const challenge = await $fetch<Challenge>(`/api/challenges/${route.params.slug}`);
+const tests = await $fetch<Test[]>(`/api/challenges/${route.params.slug}/tests`);
 const value = ref(challenge.scaffold);
 const consoleResults = ref<TestResult[]>([]);
 const consoleTime = ref(0);
@@ -51,8 +57,9 @@ const consoleTime = ref(0);
 const compileCode = async () => {
   consoleResults.value = [];
   const codigo = ts.transpileModule(value.value, { compilerOptions: { module: ts.ModuleKind.CommonJS }});
-  const tests = await $fetch<Test[]>(`/api/challenges/${route.params.slug}/tests`);
-  tests.forEach(async (test)=>{
+  const inicio = performance.now();
+  for (const test of tests) {
+    let breakProccess = false;
     const codigoTest = `
       ${codigo.outputText}
       return {
@@ -78,16 +85,21 @@ const compileCode = async () => {
     try {
       // Usando Function, para mas seguridad.
       const funcionEjecutable = new Function(codigoTest);
-      const inicio = performance.now();
+      
       const resultado = await funcionEjecutable();
-      const fin = performance.now();
-      consoleTime.value = fin - inicio;
       if(resultado !== undefined){
         consoleResults.value.push(resultado);
+        breakProccess = !resultado.check;
       }
     } catch (error) {
       consoleResults.value.push({test: '', esperado: '', obtenido: String(error), check: false});
-    }  
-  })
+      breakProccess = true;
+    }
+    if(breakProccess) {
+      break;
+    }
+  }
+  const fin = performance.now();
+  consoleTime.value = fin - inicio;
 }
 </script>
