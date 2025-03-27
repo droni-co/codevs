@@ -1,52 +1,76 @@
 <template>
   <UContainer class="py-4">
-    <UCard>
-      <template #header>
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold">Create new challenge</h2>
-        </div>
-      </template>
-      <div class="flex w-full">
-        <UForm :schema="schema" :state="newChallenge" class="space-y-4 w-1/2" @submit="saveChallenge">
-          <UFormField label="Name" name="name" required>
-            <UInput v-model="newChallenge.name" size="xl" class="block" placeholder="ej. Suma de dos números" />
-          </UFormField>
+    <UForm :schema="schema" :state="newChallenge" @submit="saveChallenge">
+      <UStepper ref="stepper" :items="items">
+        <template #content="{ item }">
+          <div v-if="item.slot === 'info'">
+            <UFormField label="Nombre del desafío" name="name" class="mb-4" required>
+              <UInput v-model="newChallenge.name" size="xl" class="block" placeholder="ej. Suma de dos números" />
+            </UFormField>
 
-          <UFormField label="Function name" name="funcName" description="Nombre de la funcion que se evaluara en pruebas ej. sumaDosNumeros." required>
-            <UInput v-model="newChallenge.funcName" class="block" placeholder="sumaDosNumeros" />
-          </UFormField>
+            <UFormField label="Descripción" name="description" class="mb-4" required>
+              <UTextarea v-model="newChallenge.description" class="block" placeholder="ej. Dado un array de enteros y un objetivo crear una funcion que retorne los indices de dos números que sumados de como reusltado el objetivo. " />
+            </UFormField>
 
-          <UFormField label="Description" name="description" required>
-            <UTextarea v-model="newChallenge.description" class="block" placeholder="ej. Dado un array de enteros y un objetivo crear una funcion que retorne los indices de dos números que sumados de como reusltado el objetivo. " />
-          </UFormField>
+            <UFormField label="Instrucciones del desafío" name="content" description="Definiciones del reto y ejemplos para tener como referencia en formato Markdown" class="mb-4" required>
+              <MonacoEditor v-model="newChallenge.content" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light', minimap: { enabled: false }, wordWrap: 'on', tabSize: 2, autoIndent: 'brackets' }" lang="markdown" />
+            </UFormField>
 
-          <UFormField label="Content" name="content" description="Definiciones del reto y ejemplos para tener como referencia en formato Markdown" required>
-            <MonacoEditor v-model="newChallenge.content" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light', minimap: { enabled: false }, wordWrap: 'on', tabSize: 2, autoIndent: 'brackets' }" lang="markdown" />
-          </UFormField>
+            <UFormField label="Complejidad" name="level" class="mb-4">
+              <USlider :min="0" :max="10" :default-value="5" :step="1" />
+            </UFormField>
+          </div>
+          <div v-else-if="item.slot === 'testing'">
+            <UFormField label="Nombre de la funcion" name="funcName" description="Función que se evaluara en pruebas ej. sumaDosNumeros." class="mb-4" required>
+              <UInput v-model="newChallenge.funcName" class="block" placeholder="sumaDosNumeros" @change="scaffold()" />
+            </UFormField>
+            <h2 class="text-lg mb-4">Tests</h2>
+            <UFormField label="Casos de prueba" description="Agrega diferentes test con sus entradas y salidas esperadas para poder validar el cumplimiento del reto." class="mb-4">
+              <UButtonGroup>
+                <UBadge color="neutral" variant="outline" size="lg" label="Entrada" />
+                <UInput v-model="newTestCase.inputs" placeholder="parametros" />
+                <UBadge color="neutral" variant="outline" size="lg" label="salida:" />
+                <UInput v-model="newTestCase.output" placeholder="valor" />
+                <UButton icon="i-meteor-icons:plus" variant="outline" @click="addTest">
+                  Agregar
+                </UButton>
+              </UButtonGroup>
+            </UFormField>
+            {{ newChallenge.tests }}
+          </div>
+          <div v-else-if="item.slot === 'scaffold'">
+            <MonacoEditor v-model="newChallenge.scaffold" class="w-full h-50" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light', minimap: { enabled: false }, wordWrap: 'on', tabSize: 2, autoIndent: 'brackets', readOnly: true }" lang="typescript" />
 
-          <UFormField label="Level" name="level">
-            <USlider :min="0" :max="10" :default-value="5" :step="1" />
-          </UFormField>
+            <UButton type="submit" class="mt-4">
+              Crear desafío
+            </UButton>
+          </div>
+        </template>
+      </UStepper>
 
-          <UButton type="submit">
-            Create challenge
-          </UButton>
-        </UForm>
-        <div class="w-1/2 p-4">
-          <h1 class="text-2xl font-bold">
-            {{ newChallenge.name }}
-          </h1>
-          <p>
-            {{ newChallenge.description }}
-          </p>
-        </div>
+      <div class="flex gap-2 justify-between mt-4">
+        <UButton
+          leading-icon="i-lucide-arrow-left"
+          :disabled="!stepper?.hasPrev"
+          @click="stepper?.prev()"
+        >
+          Anterior
+        </UButton>
+
+        <UButton
+          trailing-icon="i-lucide-arrow-right"
+          :disabled="!stepper?.hasNext"
+          @click="stepper?.next()"
+        >
+          Siguiente
+        </UButton>
       </div>
-    </UCard>
+    </UForm>
   </UContainer>
 </template>
 <script setup lang="ts">
 import * as v from 'valibot'
-import type { FormSubmitEvent } from '@nuxt/ui'
+import type { FormSubmitEvent, StepperItem } from '@nuxt/ui'
 definePageMeta({
   middleware: 'sidebase-auth'
 })
@@ -67,15 +91,60 @@ const newChallenge = ref({
   description: '',
   content: '# ejemplos\n > Describe las caracteristicas del reto y algunos ejemplos para tener como referencia\n```\n  Inputs: [0,1,2,3], 5\n  Output: [2,3] \n```',
   funcName: '',
-  level: 1
+  level: 1,
+  scaffold: '',
+  tests: []
 })
+
+const newTestCase = ref({
+  inputs: '',
+  output: '',
+})
+
+const addTest = () => {
+  newChallenge.value.tests.push(newTestCase.value)
+  newTestCase.value = {
+    inputs: '',
+    output: ''
+  }
+}
 
 const toast = useToast()
 async function saveChallenge(event: FormSubmitEvent<Schema>) {
   toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
-  $fetch('/api/challenges', {
-    method: 'POST',
-    body: event.data
-  })
+  // $fetch('/api/challenges', {
+  //   method: 'POST',
+  //   body: event.data
+  // })
+  console.log(event.data)
 }
+
+const scaffold = () => {
+  newChallenge.value.scaffold = ` // Scaffold funcction, start here!
+  function ${newChallenge.value.funcName}() {
+    return null;
+  }
+  `
+}
+const stepper = useTemplateRef('stepper')
+const items = ref<StepperItem[]>([
+  {
+    slot: 'info',
+    title: 'Definiciones',
+    description: 'Agrega información sobre el desafío',
+    icon: 'i-material-symbols:chat-info-outline-rounded'
+  },
+  {
+    slot: 'testing',
+    title: 'Testing',
+    description: 'Configura las entradas y salidas esperadas',
+    icon: 'i-qlementine-icons:test-16'
+  },
+  {
+    slot: 'scaffold',
+    title: 'Scaffold',
+    description: 'Crea la función base para el desafío',
+    icon: 'i-material-symbols:code-rounded'
+  }
+])
 </script>

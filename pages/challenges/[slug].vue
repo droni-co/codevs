@@ -19,8 +19,8 @@
       </div>
   
       <MonacoEditor v-model="value" class="w-full h-full" :options="{ theme: colorMode.value === 'dark' ? 'vs-dark' : 'vs-light' }" lang="typescript" />
-      <div class="p-3 pb-10 h-100 overflow-y-auto">
-        <div class="flex justify-between">
+      <div class="h-100 overflow-y-auto bg-slate-800 p-2">
+        <div class="flex justify-between border border-slate-500 rounded p-2 shadow-lg">
           <h2 class="text-xl font-bold">Result</h2>
           <p v-if="consoleTime > 0" class="text-sm">Time: {{ consoleTime }}ms</p>
         </div>

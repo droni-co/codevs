@@ -22,6 +22,7 @@ CREATE TABLE `Challenge` (
     `name` VARCHAR(191) NULL,
     `description` TEXT NULL,
     `content` TEXT NULL,
+    `scaffold` TEXT NULL,
     `funcName` VARCHAR(191) NOT NULL,
     `level` INTEGER NULL,
     `created_at` DATETIME(3) NULL,
