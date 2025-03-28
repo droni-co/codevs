@@ -1,10 +1,16 @@
 # TODO
  - [x] Models and ORM
  - [x] Backend routes
+ - [ ] Optimize front
+ - [ ] Submit code
+ - [ ] Comments
+ - [ ] Votes
  - [ ] Auth Middleware
  - [ ] Public site
  - [ ] Activity column
  - [ ] SEO
+ - [ ] Profile Page
+ - [ ] Cool homepage
 
 
 # Models

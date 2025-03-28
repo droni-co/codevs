@@ -1,18 +1,16 @@
 <template>
   <div class="flex h-screen">
     <div class="w-3/7 p-4">
+      <h1 class="text-2xl">{{ challenge.name }}</h1>
+      <p class="text-sm">{{ challenge.description }}</p>
       <article class="prose dark:prose-invert">
-        <h1>{{ challenge.name }}</h1>
-        <p>
-          {{ challenge.description }}
-        </p>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="md.render(challenge.content)" />
       </article>
     </div>
     <div class="flex flex-col w-4/7 h-full">
       <div class="flex justify-between p-4">
-        <h2 class="text-xl font-bold">Code</h2>
+        <h2 class="text-xl font-bold">Código</h2>
         <UButton icon="i-meteor-icons:play" @click="compileCode">
           Compile
         </UButton>
@@ -26,12 +24,13 @@
         lang="typescript" />
       <div class="overflow-y-auto bg-slate-100 dark:bg-slate-800 p-2" :class="{ 'h-1/2': consoleResults.length > 0 }">
         <div class="flex justify-between border border-slate-500 rounded p-2 shadow-lg mb-2">
-          <h2 class="text-xl font-bold">Result</h2>
-          <p v-if="consoleTime > 0" class="text-sm">Time: {{ Math.round(consoleTime) }}ms</p>
+          <h2 class="text-xl font-bold">Resultado de los tests</h2>
+          <p v-if="consoleTime > 0" class="text-sm">Tiempo: {{ Math.round(consoleTime) }}ms</p>
         </div>
         <UAlert
-          v-for="result in consoleResults" :key="result.test"
+          v-for="(result, index) in consoleResults" :key="index"
           :color="result.check ? 'success' : 'error'"
+          variant="outline"
           :title="result.test"
           :description="result.check ? '' : 'Expected: ' + JSON.stringify(result.esperado) + ' - Got: ' + JSON.stringify(result.obtenido)"
           icon="i-lucide-terminal"
