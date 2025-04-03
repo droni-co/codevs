@@ -13,7 +13,7 @@
           :key="submission.id"
           :submission="submission"
           :challenge="challenge"
-          />
+          @load-code="loadCode" />
       </div>
     </div>
     <div class="flex flex-col w-4/7 h-full">
@@ -169,6 +169,11 @@ const saveResult = () => {
       })
     })
   }
+}
+
+const loadCode = (code: string) => {
+  console.log('cargando')
+  value.value = code;
 }
 
 </script>

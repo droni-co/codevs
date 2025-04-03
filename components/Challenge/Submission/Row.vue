@@ -15,7 +15,11 @@
       </p>
     </div>
     <div class="flex items-center">
-      Botones
+      <UButton
+        icon="i-material-symbols-light:code-rounded"
+        variant="outline"
+        class="mr-2 cursor-pointer"
+        @click="emitLoadCode('loadCode', submission.code)" />
     </div>
   </div>
 </template>
@@ -23,5 +27,9 @@
 import type { Submission } from '~/types'
 const props = defineProps<{
   submission: Submission
+}>()
+
+const emitLoadCode = defineEmits<{
+  (e: 'loadCode', code: string): void
 }>()
 </script>
