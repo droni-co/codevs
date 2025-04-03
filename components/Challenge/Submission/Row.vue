@@ -11,7 +11,9 @@
       </div>
       <p class="text-sm text-slate-500 dark:text-slate-400">
         <UIcon name="i-material-symbols:alarm-on-outline-rounded" />
-        {{ props.submission.complete_time }}ms 
+        {{ Math.round(Number(props.submission.complete_time)) }}ms 
+        <UIcon name="i-material-symbols:calendar-clock-outline" />
+        {{ new Date(submission.created_at).toLocaleString() }}
       </p>
     </div>
     <div class="flex items-center">

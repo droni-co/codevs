@@ -43,7 +43,7 @@
           </div>
           <div>
             <UButton
-              v-if="checkResult()"
+              v-if="checkResult() && !isSubmissionCode"
               icon="i-mdi-light:content-save"
               @click="saveResult"
             >
@@ -80,6 +80,7 @@ const submissions = ref<Submission[]>([]);
 const value = ref(challenge.scaffold);
 const consoleResults = ref<TestResult[]>([]);
 const consoleTime = ref(0);
+const isSubmissionCode = ref(false);
 
 const compileCode = async () => {
   consoleResults.value = [];
@@ -172,7 +173,7 @@ const saveResult = () => {
 }
 
 const loadCode = (code: string) => {
-  console.log('cargando')
+  isSubmissionCode.value = true;
   value.value = code;
 }
 
