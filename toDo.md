@@ -2,11 +2,11 @@
  - [x] Models and ORM
  - [x] Backend routes
  - [ ] Optimize front
- - [ ] Submit code
+ - [x] Submit code
  - [ ] Comments
  - [ ] Votes
- - [ ] Auth Middleware
- - [ ] Public site
+ - [x] Auth Middleware
+ - [x] Public site
  - [ ] Activity column
  - [ ] SEO
  - [ ] Profile Page

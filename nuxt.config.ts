@@ -10,6 +10,17 @@ export default defineNuxtConfig({
     '@prisma/nuxt'
   ],
   css: ['assets/css/main.css'],
+  app: {
+    head: {
+      title: 'Codev | Desafios de programación js', // default fallback title
+      htmlAttrs: {
+        lang: 'es',
+      },
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ]
+    }
+  },
   auth: {
     baseURL: '/api/auth',
   },

@@ -82,6 +82,13 @@ const consoleResults = ref<TestResult[]>([]);
 const consoleTime = ref(0);
 const isSubmissionCode = ref(false);
 
+useHead({
+  title: challenge.name,
+  meta: [
+    { name: 'description', content: challenge.description }
+  ],
+})
+
 const compileCode = async () => {
   consoleResults.value = [];
   const codigo = ts.transpileModule(value.value, { compilerOptions: { module: ts.ModuleKind.CommonJS }});
