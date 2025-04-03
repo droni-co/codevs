@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import { PrismaClient } from '@prisma/client'
 
 export default NuxtAuthHandler({
+  secret: process.env.AUTH_SECRET,
   providers: [
     GoogleProvider.default({
       clientId: useRuntimeConfig().googleClientId,
