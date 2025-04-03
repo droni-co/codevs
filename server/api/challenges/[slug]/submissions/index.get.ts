@@ -1,29 +1,24 @@
 import { PrismaClient } from '@prisma/client'
-import crypto from 'node:crypto'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler( async (event) => {
   // control de acceso
   const session = await getServerSession(event)
-  if (!session) { throw createError({ statusMessage: 'Unauthenticated', statusCode: 403 }) }
+  if (!session) { return [] }
   
   const prisma = new PrismaClient()  
-  const { challengeId, code, complete_time } = await readBody(event)
+  const slug = getRouterParam(event, 'slug')
 
-  if (!challengeId || !code || !complete_time) {
-    throw createError({ statusMessage: 'Bad Request', statusCode: 400 })
-  }
-  
   const user = await prisma.user.findFirstOrThrow({
     where: {
       email: String(session.user?.email)
     }
   })
-
+  
   // Check if the challenge exists
   const challenge = await prisma.challenge.findFirstOrThrow({
     where: {
-      id: challengeId
+      slug: slug
     }
   })
 
@@ -34,24 +29,21 @@ export default defineEventHandler( async (event) => {
       challengeId: challenge.id
     }
   })
-  if (existingSubmission) {
-    throw createError({ statusMessage: 'Already submitted', statusCode: 400 })
+  if (!existingSubmission) {
+    return []
   }
 
-  const submission = await prisma.submission.create({
-    data: {
-      id: crypto.randomUUID(),
+  const submissions = await prisma.submission.findMany({
+    where: {
       challengeId: challenge.id,
-      code,
-      complete: true,
-      complete_time,
-      votes: 0,
-      rank: 0,
-      created_at: new Date(),
-      userId: user.id,
+    },
+    orderBy: {
+      created_at: 'asc'
+    },
+    include: {
+      user: true
     }
   })
 
-
-  return submission
+  return submissions
 })

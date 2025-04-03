@@ -6,8 +6,15 @@
       <article class="prose dark:prose-invert">
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="md.render(challenge.content)" />
-        {{ authStatus }}
       </article>
+      <div v-if="submissions.length > 0">
+        <ChallengeSubmissionRow
+          v-for="submission in submissions"
+          :key="submission.id"
+          :submission="submission"
+          :challenge="challenge"
+          />
+      </div>
     </div>
     <div class="flex flex-col w-4/7 h-full">
       <div class="flex justify-between p-4">
@@ -59,8 +66,9 @@
 </template>
 <script setup lang="ts">
 import ts from "typescript";
-import type { Challenge, Test, TestResult } from "~/types";
+import type { Challenge, Test, TestResult, Submission } from "~/types";
 import markdownit from 'markdown-it'
+import { ChallengeSubmissionRow } from "#components";
 const { status: authStatus } = useAuth()
 const toast = useToast()
 const md = markdownit()
@@ -68,6 +76,7 @@ const colorMode = useColorMode();
 const route = useRoute();
 const challenge = await $fetch<Challenge>(`/api/challenges/${route.params.slug}`);
 const tests = await $fetch<Test[]>(`/api/challenges/${route.params.slug}/tests`);
+const submissions = ref<Submission[]>([]);
 const value = ref(challenge.scaffold);
 const consoleResults = ref<TestResult[]>([]);
 const consoleTime = ref(0);
@@ -129,9 +138,16 @@ const checkResult = () => {
   return false;
 }
 
+const getSubmissions = async () => {
+  if(authStatus.value === 'authenticated') {
+    submissions.value = await $fetch<Submission[]>(`/api/challenges/${route.params.slug}/submissions`);
+  }
+}
+getSubmissions()
+
 const saveResult = () => {
   if(checkResult()) {
-    $fetch('/api/submissions', {
+    $fetch(`/api/challenges/${challenge.slug}/submissions`, {
       method: 'POST',
       body: {
         challengeId: challenge.id,
@@ -144,7 +160,7 @@ const saveResult = () => {
         description: 'Se ha guardado el resultado.',
         color: 'success'
       })
-
+      getSubmissions()
     }).catch(() => {
       toast.add({
         title: 'Error',

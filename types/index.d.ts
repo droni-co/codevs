@@ -27,3 +27,16 @@ export interface TestResult {
   obtenido: string,
   check: boolean
 }
+
+export interface Submission {
+  id: string
+  code: string
+  complete: boolean
+  complete_time: string
+  votes: number
+  rank: string
+  created_at: string
+  userId: string
+  challengeId: string
+  user?: User
+}
