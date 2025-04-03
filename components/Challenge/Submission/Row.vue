@@ -3,9 +3,10 @@
     <div>
       <div class="flex">
         <UAvatar
-          :src="props.submission.user.avatar"
+          :src="props.submission.user.picture"
           :alt="props.submission.user.name"
-          class="mr-2"
+          size="sm"
+          class="mr-2 mb-1"
         />
         <h3 class="font-bold pt-1">{{ submission.user.name }}</h3>
       </div>
