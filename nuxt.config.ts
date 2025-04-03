@@ -22,7 +22,9 @@ export default defineNuxtConfig({
       ]
     }
   },
-  auth: {},
+  auth: {
+    baseURL: process.env.AUTH_BASE_URL,
+  },
   runtimeConfig: {
     googleClientId: 'YOUR_GOOGLE_CLIENT_ID',
     googleClientSecret: 'YOUR_GOOGLE'
