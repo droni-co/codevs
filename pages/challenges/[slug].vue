@@ -6,6 +6,7 @@
       <article class="prose dark:prose-invert">
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="md.render(challenge.content)" />
+        {{ authStatus }}
       </article>
     </div>
     <div class="flex flex-col w-4/7 h-full">
@@ -24,8 +25,24 @@
         lang="typescript" />
       <div class="overflow-y-auto bg-slate-100 dark:bg-slate-800 p-2" :class="{ 'h-1/2': consoleResults.length > 0 }">
         <div class="flex justify-between border border-slate-500 rounded p-2 shadow-lg mb-2">
-          <h2 class="text-xl font-bold">Resultado de los tests</h2>
-          <p v-if="consoleTime > 0" class="text-sm">Tiempo: {{ Math.round(consoleTime) }}ms</p>
+          <div>
+            <h2 class="font-bold">Resultado de los tests</h2>
+            <p v-if="consoleTime > 0" class="text-sm">
+              <UIcon name="i-material-symbols:alarm-on-outline-rounded" />
+              {{ Math.round(consoleTime) }}ms 
+              <UIcon name="lucide:test-tubes" />
+              {{ consoleResults.length }} tests
+            </p>
+          </div>
+          <div>
+            <UButton
+              v-if="checkResult()"
+              icon="i-mdi-light:content-save"
+              @click="saveResult"
+            >
+              Guardar
+            </UButton>
+          </div>
         </div>
         <UAlert
           v-for="(result, index) in consoleResults" :key="index"
@@ -44,6 +61,8 @@
 import ts from "typescript";
 import type { Challenge, Test, TestResult } from "~/types";
 import markdownit from 'markdown-it'
+const { status: authStatus } = useAuth()
+const toast = useToast()
 const md = markdownit()
 const colorMode = useColorMode();
 const route = useRoute();
@@ -101,4 +120,39 @@ const compileCode = async () => {
   const fin = performance.now();
   consoleTime.value = fin - inicio;
 }
+
+const checkResult = () => {
+  if(consoleResults.value.length === tests.length && authStatus.value === 'authenticated') {
+    consoleResults.value.find((result) => !result.check);
+    return true;
+  }
+  return false;
+}
+
+const saveResult = () => {
+  if(checkResult()) {
+    $fetch('/api/submissions', {
+      method: 'POST',
+      body: {
+        challengeId: challenge.id,
+        code: value.value,
+        complete_time: consoleTime.value
+      }
+    }).then(() => {
+      toast.add({
+        title: 'Success',
+        description: 'Se ha guardado el resultado.',
+        color: 'success'
+      })
+
+    }).catch(() => {
+      toast.add({
+        title: 'Error',
+        description: 'Un error ha ocurrido al guardar el resultado.',
+        color: 'error'
+      })
+    })
+  }
+}
+
 </script>

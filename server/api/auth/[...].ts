@@ -21,12 +21,10 @@ export default NuxtAuthHandler({
           },
           update: {
             name: String(user.name),
-            email: String(user.email),
             picture: String(user.image),
           },
           create: {
             id: String(account.providerAccountId),
-            slug: String(user.name).toLowerCase().replace(' ', '-'),
             name: String(user.name),
             email: String(user.email),
             picture: String(user.image),
